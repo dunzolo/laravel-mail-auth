@@ -17,7 +17,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form action="{{ route('admin.projects.update', $project->slug)}}" method="POST">
+                        <form action="{{ route('admin.projects.update', $project->slug)}}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="mb-4 row">
@@ -30,6 +30,13 @@
                                 <label for="content" class="col-md-3 col-form-label text-md-right">Contenuto</label>
                                 <div class="col-md-8">
                                     <textarea class="form-control" rows="5" name="content" id="content" placeholder="Contenuto">{{ $project->content }}</textarea>
+                                </div>
+                            </div>
+                            <div class="mb-4 row">
+                                <label for="cover_image" class="col-md-3 col-form-label text-md-right">Copertina</label>
+                                <div class="col-md-8">
+                                    <img src="{{asset('storage/'.$project->cover_image)}}" alt="{{$project->title}}" class="w-25 mb-2">
+                                    <input type="file" name="cover_image" id="cover_image" class="form-control @error('cover_image') is-invalid @enderror">
                                 </div>
                             </div>
                             <div class="mb-4 row">

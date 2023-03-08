@@ -8,6 +8,7 @@ use App\Models\Technology;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -48,6 +49,12 @@ class ProjectController extends Controller
         $slug = Str::slug($request->title, '-');
 
         $form_data['slug'] = $slug;
+
+        if($request->hasFile('cover_image')){
+            $path = Storage::disk('public')->put('project_image', $request->cover_image);
+
+            $form_data['cover_image'] = $path;
+        }
 
         $new_project = Project::create($form_data);
 
@@ -96,6 +103,15 @@ class ProjectController extends Controller
         $slug = Str::slug($request->title, '-');
 
         $form_data['slug'] = $slug;
+
+        if($request->hasFile('cover_image')){
+            if($project->cover_image){
+                Storage::delete($project->cover_image);     
+            }
+            $path = Storage::disk('public')->put('project_image', $request->cover_image);
+
+            $form_data['cover_image'] = $path;
+        }
 
         $project->update($form_data);
 
