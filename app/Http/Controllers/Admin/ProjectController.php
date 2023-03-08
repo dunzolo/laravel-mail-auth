@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Project;
 use App\Models\Type;
 use App\Models\Technology;
+use App\Models\Lead;
+use App\Mail\ConfirmProject;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -61,6 +64,16 @@ class ProjectController extends Controller
         if($request->has('technologies')){
             $new_project->technologies()->attach($request->technologies);
         }
+
+        $new_lead = new Lead();
+        // non utilizzo il fill perchè nel forma data sono presenti anche altri campi
+        $new_lead->title = $form_data['title'];
+        $new_lead->content = $form_data['content'];
+        $new_lead->slug = $form_data['slug'];
+
+        $new_lead->save();
+
+        Mail::to('info@boolpress.com')->send(new ConfirmProject($new_lead));
 
         return redirect()->route('admin.projects.index')->with('message', 'Progetto creato correttamente!');
     }
